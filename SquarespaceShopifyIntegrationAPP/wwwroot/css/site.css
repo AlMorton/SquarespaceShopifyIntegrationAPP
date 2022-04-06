@@ -1,0 +1,40 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.artist-link-container {
+    flex: 1 16%;
+}
+
+.grid-image-inner-wrapper {
+    display: flex;
+}
+
+.grid-image-inner-wrapper img {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    height:200px;
+}
+
+.portfolio-title
+{
+    font-size: 1rem;
+    text-align: center;
+    text-decoration:none;
+}

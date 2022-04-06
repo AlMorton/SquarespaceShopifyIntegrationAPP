@@ -1,0 +1,23 @@
+﻿@page "{url?}"
+@model SquarespaceShopifyIntegrationAPP.Pages.TransferitemsModel
+@{
+}
+ <form>
+<div class="d-flex flex-row flex-wrap">
+    @{
+        var count = 1;
+    }
+    @foreach (var link in Model.ArtistPictureLinks)
+    {
+        <div class="artist-link-container p-2 d-flex flex-column">
+            @Html.Raw(link)
+            <div class="d-flex flex-row justify-content-center">
+                <input type="checkbox" class="btn-check" id="btn-check-@count-outlined" checked autocomplete="off">
+                <label class="btn btn-outline-secondary" for="btn-check-@count-outlined">Add To Shop</label><br>                
+            </div>
+            
+        </div>
+        count++;
+    }   
+</div>
+ </form>
