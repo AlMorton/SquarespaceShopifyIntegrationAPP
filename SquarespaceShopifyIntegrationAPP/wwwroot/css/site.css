@@ -30,28 +30,13 @@ body {
     color: var(--bs-white) !important;
 }
 
-.artist-link-container {
-    flex: 1 16%;
+.card.artist-link {
+    background:none;
+}
+.card-img, .card-img-bottom, .card-img-top{
+    width:250px;
 }
 
-.grid-image-inner-wrapper {
-    display: flex;
-}
-
-    .grid-image-inner-wrapper img {
-        display: flex;
-        margin-left: auto;
-        margin-right: auto;
-        height: 200px;
-    }
-
-.portfolio-title {
-    font-size: 1rem;
-    text-align: center;
-    text-decoration: none;
-}
-
-/* Boostrap overrides */
 :root {
     --bs-blue: #0d6efd;
     --bs-indigo: #6610f2;
