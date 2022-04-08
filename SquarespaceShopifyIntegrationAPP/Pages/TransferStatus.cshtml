@@ -3,6 +3,8 @@
 @{
 }
 
+<ul id="messagesList">
+</ul>
 @foreach(var ev in Model.Events)
 {
     <p>@ev.Id</p>
@@ -10,4 +12,46 @@
 }
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chat.js"></script>
+
+<script>
+"use strict";
+
+var connection = new signalR.HubConnectionBuilder().withUrl("/transfershub").build();
+
+connection.on("ReceiveMessage", function (message) {
+    var li = document.createElement("li");
+    document.getElementById("messagesList").appendChild(li);
+    // We can assign user-supplied strings to an element's textContent because it
+    // is not interpreted as markup. If you're assigning in any other way, you 
+    // should be aware of possible script injection concerns.
+    li.textContent = `${message}`;
+});
+
+async function start() {
+    try {
+        await connection.start();
+        console.log("SignalR Connected.");
+    } catch (err) {
+        console.log(err);
+        setTimeout(start, 5000);
+    }
+};
+
+connection.onclose(async () => {
+    await start();
+});
+
+// Start the connection.
+start();
+
+function SendMessage()
+{
+    console.log("Clicked")
+    connection.invoke("SendMessage").catch(function (err) {
+        return console.error(err.toString());
+    });
+}
+
+SendMessage();
+
+</script>

@@ -1,4 +1,6 @@
+using Infrastructure;
 using SquarespaceShopifyIntegrationAPP.BackgroundWorker;
+using SquarespaceShopifyIntegrationAPP.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,8 @@ builder.Services.AddHostedService<TransferService>();
 builder.Services.AddSingleton<TransferEventQueue>();
 builder.Services.AddScoped<IQueueTask>(s => s.GetRequiredService<TransferEventQueue>());
 builder.Services.AddScoped<ITaskViewer>(s => s.GetRequiredService<TransferEventQueue>());
+
+builder.Services.AddInfrastructure();
 
 var app = builder.Build();
 
@@ -31,5 +35,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.MapHub<TransferJobHub>("/transfershub");
 
 app.Run();
