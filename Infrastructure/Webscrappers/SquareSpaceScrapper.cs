@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
@@ -49,9 +50,14 @@ namespace Infrastructure.Webscrappers
 
             var descriptionNode = doc.DocumentNode.SelectNodes("//div[@class='sqs-block-content']").First(a => a.ChildNodes.Any(a => a.Name.Contains("h")));
 
+            var priveRegEx = new Regex(@"\¥\d.+\d.+\d");
+
+            var price = priveRegEx.Match(descriptionNode.InnerText);
+
             var item = new ItemDTO
             {
                 Description = descriptionNode.InnerHtml,
+                Price = price.Value,
                 ImageUrls = images,
                 Title = descriptionNode.ChildNodes.First(a => a.Name.Contains("h")).InnerText
             };
@@ -64,6 +70,7 @@ namespace Infrastructure.Webscrappers
         public string[] ImageUrls { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string Price { get; set; } = "";
     }
 
 

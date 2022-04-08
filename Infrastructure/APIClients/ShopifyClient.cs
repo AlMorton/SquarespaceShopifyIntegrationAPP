@@ -65,6 +65,14 @@ namespace Infrastructure.APIClients
         public List<string> tags { get; set; } = new List<string>();
         public List<Image> images { get; set; } = new List<Image>();
         public Image image { get; set; } = new Image();
+        public List<Variant> variants { get; set; } = new List<Variant>();
+    }
+
+    public class Variant
+    {
+        public string option1 { get; set; }
+        public string price { get; set; }
+        public string sku { get; set; }
     }
 
     public class Root

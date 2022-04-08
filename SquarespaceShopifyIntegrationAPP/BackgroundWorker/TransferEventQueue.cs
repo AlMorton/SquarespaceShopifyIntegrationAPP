@@ -43,7 +43,16 @@ namespace SquarespaceShopifyIntegrationAPP.BackgroundWorker
                         }).First(),
                         product_type = "Picture",
                         title = item.Title,
-                        vendor = "Test"
+                        vendor = "Test",
+                        variants = new List<Variant>
+                        {
+                            new Variant
+                            {
+                                option1 = "",
+                                price = item.Price.Substring(1),
+                                sku = ""
+                            }
+                        }
                     };
 
                     await _shopifyClient.CreateProduct(product);
