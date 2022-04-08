@@ -1,5 +1,7 @@
 ﻿
-namespace Infrastructure.Webscrappers
+using Application.UseCases;
+
+namespace Application.Interfaces
 {
     public interface ISquareSpaceScrapper
     {

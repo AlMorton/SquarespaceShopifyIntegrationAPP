@@ -1,4 +1,7 @@
 
+using Application.Events;
+using Application.Interfaces;
+using Application.UseCases;
 using Infrastructure.Webscrappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

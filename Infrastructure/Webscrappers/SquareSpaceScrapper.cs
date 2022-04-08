@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using Application.Interfaces;
+using Application.UseCases;
 using HtmlAgilityPack;
+using System.Text.RegularExpressions;
 
 namespace Infrastructure.Webscrappers
 {
@@ -44,7 +40,7 @@ namespace Infrastructure.Webscrappers
         {
             var uri = new Uri(url);
             var web = new HtmlWeb();
-            HtmlDocument doc = web.Load(uri);            
+            HtmlDocument doc = web.Load(uri);
 
             var images = doc.DocumentNode.SelectNodes("//img[@class='thumb-image']").Select(a => a.GetAttributeValue("data-src", "")).ToArray();
 
@@ -65,30 +61,5 @@ namespace Infrastructure.Webscrappers
             return item;
         }
     }
-    public class ItemDTO
-    {
-        public string[] ImageUrls { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Price { get; set; } = "";
-    }
 
-
-    public class CollectionItem
-    {
-        public string HostUrl { get; set; }
-        public string ItemUrl { get; set; }
-        public string ImgSrc { get; set; }
-        public string Name { get; set; }
-        public bool Transfer { get; set; } = false;
-
-        public string JsonMePlease() => JsonSerializer.Serialize(this);
-
-        public string GetImageWithSize(int size)
-        {
-            return ImgSrc + $"?format={size}w";
-        }        
-
-        public string GetAbsoluteURL() => $"https://{HostUrl}{ItemUrl}";
-    }
 }

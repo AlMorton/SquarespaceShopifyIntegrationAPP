@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Interfaces;
 
 namespace Infrastructure
 {
@@ -16,7 +17,7 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, ConfigurationManager configuration)
         {
-            services.AddSingleton<ISquareSpaceScrapper, SquareSpaceScrapper>();            
+            services.AddScoped<ISquareSpaceScrapper, SquareSpaceScrapper>();            
 
             services.AddHttpClient<IShopifyClient, ShopifyClient>();
 

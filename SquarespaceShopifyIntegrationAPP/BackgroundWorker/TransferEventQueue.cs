@@ -1,5 +1,5 @@
-﻿using Infrastructure.APIClients;
-using Infrastructure.Webscrappers;
+﻿using Application.Events;
+using Application.UseCases;
 using System.Threading.Channels;
 
 namespace SquarespaceShopifyIntegrationAPP.BackgroundWorker
@@ -8,62 +8,31 @@ namespace SquarespaceShopifyIntegrationAPP.BackgroundWorker
     {
         private readonly Channel<TransferEvent> _tasks = Channel.CreateUnbounded<TransferEvent>();
 
-        private readonly ISquareSpaceScrapper _squareSpaceScrapper;
-        private readonly IShopifyClient _shopifyClient;
         private readonly ILogger<TransferEventQueue> _logger;
 
-        public TransferEventQueue(ISquareSpaceScrapper squareSpaceScrapper, IShopifyClient shopifyClient, ILogger<TransferEventQueue> logger)
+        public TransferEventQueue(ILogger<TransferEventQueue> logger)
         {
-            _squareSpaceScrapper = squareSpaceScrapper;
-            _shopifyClient = shopifyClient;
-            _logger = logger;
+            _logger = logger;            
         }
 
         public List<TransferEvent> EventsBeingProccessed { get; private set; } = new List<TransferEvent>();
 
-        public async Task ListenForEventsAsync()
+        public async Task ListenForEventsAsync(Func<TransferEvent, Task> action)
         {
-            await foreach (var @event in _tasks.Reader.ReadAllAsync())
+            await foreach (TransferEvent? @event in _tasks.Reader.ReadAllAsync())
             {
                 EventsBeingProccessed.Add(@event);
                 try
                 {
-                    var item = _squareSpaceScrapper.GetItemDetails(@event.ItemURL);
+                     await action.Invoke(@event);
 
-                    var product = new Product
-                    {
-                        body_html = item.Description,
-                        images = item.ImageUrls.Select(u => new Image
-                        {
-                            src = u,
-                        }).ToList(),
-                        image = item.ImageUrls.Take(1).Select(u => new Image
-                        {
-                            src = u,
-                        }).First(),
-                        product_type = "Picture",
-                        title = item.Title,
-                        vendor = "Test",
-                        variants = new List<Variant>
-                        {
-                            new Variant
-                            {
-                                option1 = "",
-                                price = item.Price.Substring(1),
-                                sku = ""
-                            }
-                        }
-                    };
-
-                    await _shopifyClient.CreateProduct(product);
-
-                    await Task.Delay(1000);
+                     await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message); 
-                }               
-                
+                    _logger.LogError(ex.Message);
+                }
+
             }
         }
 
@@ -80,17 +49,5 @@ namespace SquarespaceShopifyIntegrationAPP.BackgroundWorker
     public interface ITaskViewer
     {
         List<TransferEvent> EventsBeingProccessed { get; }
-    }
-
-    public class TransferEvent
-    {
-        public Guid Id { get; }
-        public string ItemURL { get; }
-
-        public TransferEvent(string url)
-        {
-            Id = Guid.NewGuid();
-            ItemURL = url;
-        }
     }
 }

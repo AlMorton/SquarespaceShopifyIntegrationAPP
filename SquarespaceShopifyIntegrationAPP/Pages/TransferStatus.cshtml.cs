@@ -1,3 +1,4 @@
+using Application.Events;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SquarespaceShopifyIntegrationAPP.BackgroundWorker;
