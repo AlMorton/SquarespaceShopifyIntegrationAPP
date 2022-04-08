@@ -20,9 +20,9 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
 
         public void OnGet(string url)
         {
-            url = Uri.UnescapeDataString(url);
+            Uri uri = new Uri(Uri.UnescapeDataString(url));
             var web = new HtmlWeb();
-            var doc = web.Load(url);
+            var doc = web.Load(uri);
 
             ArtistPictureLinks = doc.DocumentNode.SelectNodes("//a")
                 .Where(a => a.Attributes.Any(attr => a.HasClass("grid-item")))
@@ -37,6 +37,7 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
 
                     return new CollectionItem
                     {
+                        HostUrl = uri.Host,
                         ImgSrc = imageUrl,
                         ItemUrl = src,
                         Name = name
@@ -48,7 +49,7 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
         {
             foreach (var item in items)
             {
-                await this.queueTask.QueueEvent(new TransferEvent { Id = Guid.NewGuid()});
+                await this.queueTask.QueueEvent(new TransferEvent(item.GetAsJson()));
             }
 
             return RedirectToPage("/TransferStatus");
@@ -57,6 +58,7 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
 
     public class CollectionItem
     {
+        public string HostUrl { get; set; }
         public string ItemUrl { get; set; }
         public string ImgSrc { get; set; }
         public string Name { get; set; }
@@ -69,6 +71,6 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
             return ImgSrc + $"?format={size}w";
         }
 
-        public string GetAsJson() => ItemUrl + "?format=json-pretty";
+        public string GetAsJson() => $"https://{HostUrl}{ItemUrl}?format=json-pretty";
     }
 }
