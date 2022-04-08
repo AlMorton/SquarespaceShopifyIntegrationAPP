@@ -1,7 +1,17 @@
+using SquarespaceShopifyIntegrationAPP.BackgroundWorker;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddSignalR();
+
+builder.Services.AddHostedService<TransferService>();
+
+builder.Services.AddSingleton<TransferQueue>();
+builder.Services.AddScoped<IQueueTask>(s => s.GetRequiredService<TransferQueue>());
+builder.Services.AddScoped<ITaskViewer>(s => s.GetRequiredService<TransferQueue>());
 
 var app = builder.Build();
 

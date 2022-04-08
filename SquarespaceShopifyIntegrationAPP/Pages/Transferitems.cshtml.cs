@@ -1,6 +1,7 @@
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SquarespaceShopifyIntegrationAPP.BackgroundWorker;
 using System.Text.Json;
 
 namespace SquarespaceShopifyIntegrationAPP.Pages
@@ -8,11 +9,13 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
     [IgnoreAntiforgeryToken(Order = 1001)]
     public class TransferitemsModel : PageModel
     {
+        private readonly IQueueTask queueTask;
         public List<CollectionItem> ArtistPictureLinks { get; set; }
 
-        public TransferitemsModel()
+        public TransferitemsModel(IQueueTask queueTask) 
         {
-           ArtistPictureLinks = new List<CollectionItem>();
+            this.queueTask = queueTask;
+            ArtistPictureLinks = new List<CollectionItem>();
         }
 
         public void OnGet(string url)
@@ -41,10 +44,14 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
                 }).ToList();
         }
 
-        public void OnPost([FromBody] List<CollectionItem> items)
+        public async Task<IActionResult> OnPost([FromBody] List<CollectionItem> items)
         {
-            
+            foreach (var item in items)
+            {
+                await this.queueTask.QueueEvent(new TransferEvent { Id = Guid.NewGuid()});
+            }
 
+            return RedirectToPage("/TransferStatus");
         }
     }
 
@@ -61,5 +68,7 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
         {
             return ImgSrc + $"?format={size}w";
         }
+
+        public string GetAsJson() => ItemUrl + "?format=json-pretty";
     }
 }

@@ -43,13 +43,11 @@
         constructor(element)
         {
             this._checkBoxInput = element.querySelector('.btn-check');
-            this._jsonInput = JSON.parse(element.querySelector('.json-input').value);
-            console.log(this._jsonInput);
+            this._jsonInput = JSON.parse(element.querySelector('.json-input').value);            
             this._checkBoxInput.addEventListener('change', (ev) => {
                     // The checked input is always bound as true, from the asp-for, even though the model value is false.                    
                     this._jsonInput.Transfer = !ev.target.checked;
                 });
-            
         }
 
         get selected() {
@@ -81,13 +79,12 @@
             selectedItemsMemory.forEach(m => {
                 
                 if(m.selected) items.push(m.json);
-            });
-            console.log(items);
+            });            
 
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (this.readyState === 4 && this.status === 200) {
-                    alert('Posted using XMLHttpRequest');
+                    window.location.href = this.responseURL;                    
                 }
             };
 
@@ -95,7 +92,7 @@
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(JSON.stringify(items));
 
-            return false;
+            return true;
         };
 
     }
