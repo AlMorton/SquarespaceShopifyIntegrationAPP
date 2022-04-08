@@ -7,22 +7,99 @@
         @{
             var count = 1;
         }
-        @foreach (var item in Model.ArtistPictureLinks)
+        @for (var item = 0; item < Model.ArtistPictureLinks.Count(); item++)
         {
-                <div class="card artist-link flex-column justify-content-center" style="width: 18rem;">
-                    <img src="@item.GetImageWithSize(250)" class="card-img-top" alt="...">
-                    <div class="card-body d-flex flex-column justify-content-end">
-                        <div class="d-flex flex-row justify-content-center">
-                             <h5 class="d-flex card-title">@item.Name</h5>
-                        </div>
-                        <div class="d-flex flex-row justify-content-center">
-                            <input type="checkbox" class="btn-check" id="btn-check-@count-outlined" checked autocomplete="off">
-                            <label class="btn btn-outline-secondary" for="btn-check-@count-outlined">Add To Shop</label><br>
-                        </div>
+
+            <div class="card artist-link flex-column justify-content-center" style="width: 18rem;">
+                <img src="@Model.ArtistPictureLinks[item].GetImageWithSize(250)" class="card-img-top" alt="...">
+                <div class="card-body d-flex flex-column justify-content-end">
+                    <div class="d-flex flex-row justify-content-center">
+                        <h5 class="d-flex card-title">@Model.ArtistPictureLinks[item].Name</h5>
+                    </div>
+                    <div class="d-flex flex-row justify-content-center selection-group">
+                        <input type="checkbox" class="btn-check"
+                           id="btn-check-@count-outlined"
+                           checked autocomplete="off"
+                           asp-for="@Model.ArtistPictureLinks[item].Transfer">
+                        <label class="btn btn-outline-secondary" for="btn-check-@count-outlined">Add To Shop @Model.ArtistPictureLinks[item].Transfer</label><br>
+                        <input class="json-input" type="hidden" value="@Model.ArtistPictureLinks[item].JsonMePlease()" name="json-@item">
                     </div>
                 </div>
-            
+            </div>
+
             count++;
         }
+
     </div>
+    <button class="btn btn-primary" type="submit">Transfer</button>
 </form>
+
+<script>
+
+    class selectionGroup
+    {
+        _checkBoxInput;
+        _jsonInput;
+        constructor(element)
+        {
+            this._checkBoxInput = element.querySelector('.btn-check');
+            this._jsonInput = JSON.parse(element.querySelector('.json-input').value);
+            console.log(this._jsonInput);
+            this._checkBoxInput.addEventListener('change', (ev) => {
+                    // The checked input is always bound as true, from the asp-for, even though the model value is false.                    
+                    this._jsonInput.Transfer = !ev.target.checked;
+                });
+            
+        }
+
+        get selected() {
+            return this._jsonInput.Transfer;
+            }
+        get json()
+        {
+            return this._jsonInput
+        }
+    }
+
+    let SetupListeners = () => {
+
+        let selectedItemsMemory = [];
+
+        let inputs = document.querySelectorAll('.selection-group');
+
+        let count = 0;
+        inputs.forEach(el => {
+            selectedItemsMemory[count] = new selectionGroup(el);
+            count++;
+        });        
+
+        document.forms[0].onsubmit = (ev) => {
+
+            ev.preventDefault();
+
+            let items = [];
+            selectedItemsMemory.forEach(m => {
+                
+                if(m.selected) items.push(m.json);
+            });
+            console.log(items);
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    alert('Posted using XMLHttpRequest');
+                }
+            };
+
+            xhr.open('post', '/Transferitems', true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify(items));
+
+            return false;
+        };
+
+    }
+
+    SetupListeners();
+
+</script>

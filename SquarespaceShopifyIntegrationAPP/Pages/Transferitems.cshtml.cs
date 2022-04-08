@@ -1,12 +1,14 @@
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.Json;
 
 namespace SquarespaceShopifyIntegrationAPP.Pages
 {
+    [IgnoreAntiforgeryToken(Order = 1001)]
     public class TransferitemsModel : PageModel
     {
-        public IEnumerable<CollectionItem> ArtistPictureLinks { get; set; }
+        public List<CollectionItem> ArtistPictureLinks { get; set; }
 
         public TransferitemsModel()
         {
@@ -36,7 +38,13 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
                         ItemUrl = src,
                         Name = name
                     };
-                });
+                }).ToList();
+        }
+
+        public void OnPost([FromBody] List<CollectionItem> items)
+        {
+            
+
         }
     }
 
@@ -45,6 +53,9 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
         public string ItemUrl { get; set; }
         public string ImgSrc { get; set; }
         public string Name { get; set; }
+        public bool Transfer { get; set; } = false;
+
+        public string JsonMePlease() => JsonSerializer.Serialize(this);
 
         public string GetImageWithSize(int size)
         {
