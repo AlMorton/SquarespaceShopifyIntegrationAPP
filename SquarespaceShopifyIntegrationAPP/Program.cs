@@ -1,4 +1,5 @@
 using Infrastructure;
+using Infrastructure.APIClients;
 using SquarespaceShopifyIntegrationAPP.BackgroundWorker;
 using SquarespaceShopifyIntegrationAPP.Hubs;
 
@@ -15,7 +16,9 @@ builder.Services.AddSingleton<TransferEventQueue>();
 builder.Services.AddScoped<IQueueTask>(s => s.GetRequiredService<TransferEventQueue>());
 builder.Services.AddScoped<ITaskViewer>(s => s.GetRequiredService<TransferEventQueue>());
 
-builder.Services.AddInfrastructure();
+builder.Services.Configure<ShopifyConfig>(builder.Configuration.GetSection(ShopifyConfig.Config));
+
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 

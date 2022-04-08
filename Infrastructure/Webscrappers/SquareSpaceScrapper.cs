@@ -47,12 +47,13 @@ namespace Infrastructure.Webscrappers
 
             var images = doc.DocumentNode.SelectNodes("//img[@class='thumb-image']").Select(a => a.GetAttributeValue("data-src", "")).ToArray();
 
-            var descriptionNode = doc.DocumentNode.SelectNodes("//div[@class='sqs-block-content']").First(a => a.ChildNodes.Any(a => a.Name == "h3"));
+            var descriptionNode = doc.DocumentNode.SelectNodes("//div[@class='sqs-block-content']").First(a => a.ChildNodes.Any(a => a.Name.Contains("h")));
 
             var item = new ItemDTO
             {
                 Description = descriptionNode.InnerHtml,
-                ImageUrls = images
+                ImageUrls = images,
+                Title = descriptionNode.ChildNodes.First(a => a.Name.Contains("h")).InnerText
             };
 
             return item;
