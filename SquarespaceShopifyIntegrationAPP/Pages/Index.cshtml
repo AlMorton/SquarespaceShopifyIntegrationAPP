@@ -6,6 +6,10 @@
 
 <div class="text-center">
     <form method="post">
-        <input type="search" asp-for="ArtistPageURL"/>
-    </form>   
+        <div class="mb-3">
+            <label for="ArtistPageURL" class="form-label">Enter the Artist's Url</label>
+            <input class="form-control" type="search" asp-for="ArtistPageURL" />
+        </div>
+        <button type="submit" class="btn btn-primary">Next</button>
+    </form>
 </div>
