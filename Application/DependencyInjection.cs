@@ -1,4 +1,5 @@
 ﻿using Application.UseCases;
+using Application.UseCases.Products;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
@@ -7,7 +8,7 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<CreateShopifyItem_UseCase>();
+            services.AddScoped<CreateShopifyProductFromSquareSpace_UseCase>();
 
             return services;
         }

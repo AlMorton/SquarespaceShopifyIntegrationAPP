@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.UseCases;
+using Application.UseCases.Products;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 

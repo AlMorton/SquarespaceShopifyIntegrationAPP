@@ -21,6 +21,8 @@ namespace Infrastructure
 
             services.AddHttpClient<IShopifyClient, ShopifyClient>();
 
+            services.AddHttpClient<ISqaureSpaceClient, SqaureSpaceClient>();
+
             return services;
         }
     }

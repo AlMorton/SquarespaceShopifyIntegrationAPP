@@ -1,12 +1,11 @@
 
 using Application.Events;
-using Application.Interfaces;
 using Application.UseCases;
-using Infrastructure.Webscrappers;
+using Application.UseCases.Products;
+using Infrastructure.APIClients;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SquarespaceShopifyIntegrationAPP.BackgroundWorker;
-using System.Text.Json;
 
 namespace SquarespaceShopifyIntegrationAPP.Pages
 {
@@ -14,31 +13,61 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
     public class TransferitemsModel : PageModel
     {
         private readonly IQueueTask _queueTask;
-        private readonly ISquareSpaceScrapper _squareSpaceScrapper;
+        private readonly ISqaureSpaceClient _squareSpaceClient;
         public List<CollectionItem> ArtistPictureLinks { get; set; }
+        public bool Success = false;
+        public string ErrorMessage { get; set; }
 
-        public TransferitemsModel(IQueueTask queueTask, ISquareSpaceScrapper squareSpaceScrapper) 
+        public TransferitemsModel(IQueueTask queueTask, ISqaureSpaceClient sqaureSpaceClient)
         {
             _queueTask = queueTask;
-            _squareSpaceScrapper = squareSpaceScrapper; 
+            _squareSpaceClient = sqaureSpaceClient;
             ArtistPictureLinks = new List<CollectionItem>();
         }
 
-        public void OnGet(string url)
+        public async Task OnGetAsync(string url)
         {
-            ArtistPictureLinks = _squareSpaceScrapper.GetArtistCollectionItems(url);
+            try
+            {
+                ArtistPictureLinks = await _squareSpaceClient.GetCollectionItemsAsync(url);
+                Success = true;
+
+
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Something went wrong: Unable to process Sqaure Space page";
+            }
         }
 
-        public async Task<IActionResult> OnPost([FromBody] List<CollectionItem> items)
-        {
-            foreach (var item in items)
+        public async Task<IActionResult> OnPost([FromBody] JsonModel model)
+        {           
+
+            foreach (var item in model.Items)
             {
-                await _queueTask.QueueEvent(new TransferEvent(item.GetAbsoluteURL()));
+                await _queueTask.QueueEvent(model.ToTransFerEvent());
             }
 
             return RedirectToPage("/TransferStatus");
         }
+
+        public class JsonModel
+        {
+            public string CollectionName { get; set; }
+            public List<CollectionItem> Items { get; set; }
+
+            public TransferEvent ToTransFerEvent() => new TransferEvent
+            {
+                CollectionDTO = new CreateCollectionWIthProductsDTO
+                {
+                    CollectionName = this.CollectionName,
+                    Items = this.Items
+                }
+            };
+
+        }
+            
     }
 
-    
+
 }

@@ -1,11 +1,12 @@
 ﻿
 using Application.UseCases;
-using static Application.UseCases.Root;
+using Application.UseCases.Products;
+using static Application.UseCases.Products.Product_Root;
 
 namespace Application.Interfaces
 {
     public interface IShopifyClient
     {
-        Task<bool> CreateProduct(Product product);
+        Task<ProductEntity> CreateProduct(Product product);
     }
 }

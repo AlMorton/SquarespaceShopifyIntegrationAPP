@@ -1,5 +1,6 @@
 ﻿
 using Application.UseCases;
+using Application.UseCases.Products;
 
 namespace Application.Interfaces
 {

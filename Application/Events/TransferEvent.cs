@@ -1,14 +1,12 @@
-﻿namespace Application.Events
+﻿using Application.UseCases;
+using Application.UseCases.Products;
+
+namespace Application.Events
 {
     public class TransferEvent
     {
-        public Guid Id { get; }
-        public string ItemURL { get; }
-
-        public TransferEvent(string url)
-        {
-            Id = Guid.NewGuid();
-            ItemURL = url;
-        }
+        public Guid Id { get; } = Guid.NewGuid();        
+        public CreateCollectionWIthProductsDTO CollectionDTO { get; set; }
+        
     }
 }

@@ -1,61 +1,67 @@
-﻿using Application.Events;
-using Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Application.Interfaces;
 using System.Text.Json;
-using System.Threading.Tasks;
-using static Application.UseCases.Root;
-using static Application.UseCases.Root.Product;
+using static Application.UseCases.Products.Product_Root;
+using static Application.UseCases.Products.Product_Root.Product;
 
-namespace Application.UseCases
+
+namespace Application.UseCases.Products
 {
-    public class CreateShopifyItem_UseCase
+    public class CreateShopifyProductFromSquareSpace_UseCase
     {
         private readonly ISquareSpaceScrapper _squareSpaceScrapper;
         private readonly IShopifyClient _shopifyClient;
 
-        public CreateShopifyItem_UseCase(ISquareSpaceScrapper squareSpaceScrapper, IShopifyClient shopifyClient)
+        public CreateShopifyProductFromSquareSpace_UseCase(ISquareSpaceScrapper squareSpaceScrapper, IShopifyClient shopifyClient)
         {
             _squareSpaceScrapper = squareSpaceScrapper;
             _shopifyClient = shopifyClient;
         }
 
-        public async Task HandleAsync(TransferEvent @event)
+        public async Task<long> HandleAsync(CollectionItem item)
         {
-            var item = _squareSpaceScrapper.GetItemDetails(@event.ItemURL);
+            var itemDetails = _squareSpaceScrapper.GetItemDetails(item.GetAbsoluteURL());
 
             var product = new Product
             {
-                body_html = item.Description,
-                images = item.ImageUrls.Select(u => new Image
+                body_html = itemDetails.Description,
+                images = itemDetails.ImageUrls.Select(u => new Image
                 {
                     src = u,
                 }).ToList(),
-                image = item.ImageUrls.Take(1).Select(u => new Image
+                image = itemDetails.ImageUrls.Take(1).Select(u => new Image
                 {
                     src = u,
                 }).First(),
                 product_type = "Picture",
-                title = item.Title,
+                title = itemDetails.Title,
                 vendor = "Test",
                 variants = new List<Variant>
                         {
                             new Variant
                             {
                                 option1 = "",
-                                price = item.Price.Substring(1),
+                                price = itemDetails.Price.Substring(1),
                                 sku = ""
                             }
                         }
             };
 
-            await _shopifyClient.CreateProduct(product);
+            var productEntity = await _shopifyClient.CreateProduct(product);
+
+            return productEntity.Id;
         }
     }
 
-    public class Root
+    public class ProductEntityRoot
+    {
+        public ProductEntity Product { get; set; }
+    }
+    public class ProductEntity
+    {
+        public long Id { get; set; }
+    }
+
+    public class Product_Root
     {
         public Product product { get; set; }
 
@@ -109,5 +115,11 @@ namespace Application.UseCases
         }
 
         public string GetAbsoluteURL() => $"https://{HostUrl}{ItemUrl}";
+    }
+
+    public class CreateCollectionWIthProductsDTO
+    {
+        public string CollectionName { get; set; }
+        public List<CollectionItem> Items { get; set; }
     }
 }
