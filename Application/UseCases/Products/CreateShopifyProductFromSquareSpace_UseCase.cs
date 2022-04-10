@@ -8,9 +8,9 @@ namespace Application.UseCases.Products
     public class CreateShopifyProductFromSquareSpace_UseCase
     {
         private readonly ISquareSpaceScrapper _squareSpaceScrapper;
-        private readonly IShopifyClient _shopifyClient;
+        private readonly IShopifyProductClient _shopifyClient;
 
-        public CreateShopifyProductFromSquareSpace_UseCase(ISquareSpaceScrapper squareSpaceScrapper, IShopifyClient shopifyClient)
+        public CreateShopifyProductFromSquareSpace_UseCase(ISquareSpaceScrapper squareSpaceScrapper, IShopifyProductClient shopifyClient)
         {
             _squareSpaceScrapper = squareSpaceScrapper;
             _shopifyClient = shopifyClient;

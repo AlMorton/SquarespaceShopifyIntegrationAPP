@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Infrastructure.APIClients
 {
 
-    public class ShopifyClient : IShopifyClient
+    public class ShopifyClient : IShopifyProductClient, IShopifyCollectionClient
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
@@ -45,7 +45,7 @@ namespace Infrastructure.APIClients
 
             var response = await _httpClient.PostAsync($"{_shopUrl}/admin/api/2021-10/custom_collections.json", content);
 
-            var entity = await CreateEntityFromResponse<Root_CustomCollection<CustomCollectionEntity>>(response); 
+            var entity = await CreateEntityFromResponse<Root_CustomCollection<CustomCollectionEntity>>(response);
 
             return entity.custom_collection;
         }
@@ -56,7 +56,7 @@ namespace Infrastructure.APIClients
 
             var response = await _httpClient.PostAsync($"{_shopUrl}/admin/api/2022-04/collects.json", content);
 
-            var entity = await CreateEntityFromResponse<Root_Collect<CollectEntity>>(response); 
+            var entity = await CreateEntityFromResponse<Root_Collect<CollectEntity>>(response);
 
             return entity.collect;
         }
@@ -82,5 +82,5 @@ namespace Infrastructure.APIClients
             return entity;
         }
     }
-       
+
 }

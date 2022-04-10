@@ -7,15 +7,15 @@
 
     public class CollectLinkPost
     {
-        public int product_id { get; set; }
-        public int collection_id { get; set; }
+        public long product_id { get; set; }
+        public long collection_id { get; set; }
     }
 
     public class CollectEntity
     {
-        public int id { get; set; }
-        public int collection_id { get; set; }
-        public int product_id { get; set; }
+        public long id { get; set; }
+        public long collection_id { get; set; }
+        public long product_id { get; set; }
         public DateTime created_at { get; set; }
         public DateTime updated_at { get; set; }
         public int position { get; set; }

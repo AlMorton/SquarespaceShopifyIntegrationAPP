@@ -19,7 +19,9 @@ namespace Infrastructure
         {
             services.AddScoped<ISquareSpaceScrapper, SquareSpaceScrapper>();            
 
-            services.AddHttpClient<IShopifyClient, ShopifyClient>();
+            services.AddHttpClient<IShopifyProductClient, ShopifyClient>();
+
+            services.AddHttpClient<IShopifyCollectionClient, ShopifyClient>();
 
             services.AddHttpClient<ISqaureSpaceClient, SqaureSpaceClient>();
 
