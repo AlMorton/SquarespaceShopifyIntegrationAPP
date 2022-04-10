@@ -34,31 +34,31 @@ namespace Infrastructure.APIClients
 
             var response = await _httpClient.PostAsync($"{_shopUrl}/admin/api/2021-10/products.json", content);
 
-            if(response.StatusCode != System.Net.HttpStatusCode.Created) throw new Exception(response.StatusCode.ToString());
+            var entity = await CreateEntityFromResponse<Product_Root<ProductEntity>>(response);
 
-            var json = await response.Content.ReadAsStringAsync();
-
-            var entity = JsonSerializer.Deserialize<Product_Root<ProductEntity>>(json);
-                
             return entity.product;
         }
 
         public async Task<CustomCollectionEntity> CreateCollection(CustomCollectionPost customCollection)
         {
-            StringContent content = CreateContent(new Root_CustomCollection<CustomCollectionPost> { custom_collection = customCollection });
+            var content = CreateContent(new Root_CustomCollection<CustomCollectionPost> { custom_collection = customCollection });
 
             var response = await _httpClient.PostAsync($"{_shopUrl}/admin/api/2021-10/custom_collections.json", content);
 
-            var json = await response.Content.ReadAsStringAsync();
-
-            var entity = JsonSerializer.Deserialize<Root_CustomCollection<CustomCollectionEntity>>(json);
+            var entity = await CreateEntityFromResponse<Root_CustomCollection<CustomCollectionEntity>>(response); 
 
             return entity.custom_collection;
         }
 
-        public async Task AddProductToCollection(CollectLinkPost collectLink)
+        public async Task<CollectEntity> LinkProductToCollection(CollectLinkPost collectLink)
         {
+            var content = CreateContent(new Root_Collect<CollectLinkPost> { collect = collectLink });
 
+            var response = await _httpClient.PostAsync($"{_shopUrl}/admin/api/2022-04/collects.json", content);
+
+            var entity = await CreateEntityFromResponse<Root_Collect<CollectEntity>>(response); 
+
+            return entity.collect;
         }
 
         private StringContent CreateContent<T>(T data)
@@ -71,7 +71,16 @@ namespace Infrastructure.APIClients
 
             return content;
         }
-    }
+        private static async Task<TResponseEntity> CreateEntityFromResponse<TResponseEntity>(HttpResponseMessage response)
+        {
+            if (response.StatusCode != System.Net.HttpStatusCode.Created) throw new Exception(response.StatusCode.ToString());
 
+            var json = await response.Content.ReadAsStringAsync();
+
+            var entity = JsonSerializer.Deserialize<TResponseEntity>(json);
+
+            return entity;
+        }
+    }
        
 }
