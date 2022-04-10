@@ -15,7 +15,6 @@ builder.Services.AddHostedService<TransferService>();
 
 builder.Services.AddSingleton<TransferEventQueue>();
 builder.Services.AddScoped<IQueueTask>(s => s.GetRequiredService<TransferEventQueue>());
-builder.Services.AddScoped<ITaskViewer>(s => s.GetRequiredService<TransferEventQueue>());
 
 builder.Services.Configure<ShopifyConfig>(builder.Configuration.GetSection(ShopifyConfig.Config));
 

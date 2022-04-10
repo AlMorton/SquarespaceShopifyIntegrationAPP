@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces;
 using System.Text.Json;
-using static Application.UseCases.Products.Product_Root;
-using static Application.UseCases.Products.Product_Root.Product;
+using static Application.UseCases.Products.Product;
 
 
 namespace Application.UseCases.Products
@@ -50,43 +49,37 @@ namespace Application.UseCases.Products
 
             return productEntity.Id;
         }
-    }
-
-    public class ProductEntityRoot
-    {
-        public ProductEntity Product { get; set; }
-    }
+    }    
     public class ProductEntity
     {
         public long Id { get; set; }
     }
 
-    public class Product_Root
+    public class Product_Root<TProduct>
     {
-        public Product product { get; set; }
+        public TProduct product { get; set; }
+    }
+    public class Product
+    {
+        public string title { get; set; }
+        public string body_html { get; set; }
+        public string vendor { get; set; }
+        public string product_type { get; set; }
+        public List<string> tags { get; set; } = new List<string>();
+        public List<Image> images { get; set; } = new List<Image>();
+        public Image image { get; set; } = new Image();
+        public List<Variant> variants { get; set; } = new List<Variant>();
 
-        public class Product
+        public class Image
         {
-            public string title { get; set; }
-            public string body_html { get; set; }
-            public string vendor { get; set; }
-            public string product_type { get; set; }
-            public List<string> tags { get; set; } = new List<string>();
-            public List<Image> images { get; set; } = new List<Image>();
-            public Image image { get; set; } = new Image();
-            public List<Variant> variants { get; set; } = new List<Variant>();
+            public string src { get; set; }
+        }
 
-            public class Image
-            {
-                public string src { get; set; }
-            }
-
-            public class Variant
-            {
-                public string option1 { get; set; }
-                public string price { get; set; }
-                public string sku { get; set; }
-            }
+        public class Variant
+        {
+            public string option1 { get; set; }
+            public string price { get; set; }
+            public string sku { get; set; }
         }
     }
 

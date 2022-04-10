@@ -4,7 +4,7 @@ using System.Threading.Channels;
 
 namespace SquarespaceShopifyIntegrationAPP.BackgroundWorker
 {
-    public class TransferEventQueue : IQueueTask, ITaskViewer
+    public class TransferEventQueue : IQueueTask
     {
         private readonly Channel<TransferEvent> _tasks = Channel.CreateUnbounded<TransferEvent>();
 
@@ -14,14 +14,10 @@ namespace SquarespaceShopifyIntegrationAPP.BackgroundWorker
         {
             _logger = logger;            
         }
-
-        public List<TransferEvent> EventsBeingProccessed { get; private set; } = new List<TransferEvent>();
-
         public async Task ListenForEventsAsync(Func<TransferEvent, Task> action)
         {
             await foreach (TransferEvent? @event in _tasks.Reader.ReadAllAsync())
-            {
-                EventsBeingProccessed.Add(@event);
+            {         
                 try
                 {
                      await action.Invoke(@event);
@@ -40,14 +36,5 @@ namespace SquarespaceShopifyIntegrationAPP.BackgroundWorker
         {
             await _tasks.Writer.WriteAsync(@event, new CancellationToken());
         }
-    }
-
-    public interface IQueueTask
-    {
-        Task QueueEvent(TransferEvent @event);
-    }
-    public interface ITaskViewer
-    {
-        List<TransferEvent> EventsBeingProccessed { get; }
     }
 }
