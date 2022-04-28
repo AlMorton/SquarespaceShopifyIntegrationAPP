@@ -41,12 +41,9 @@ namespace SquarespaceShopifyIntegrationAPP.Pages
         }
 
         public async Task<IActionResult> OnPost([FromBody] JsonModel model)
-        {           
+        {
 
-            foreach (var item in model.Items)
-            {
-                await _queueTask.QueueEvent(model.ToTransFerEvent());
-            }
+            await _queueTask.QueueEvent(model.ToTransFerEvent());           
 
             return RedirectToPage("/TransferStatus");
         }

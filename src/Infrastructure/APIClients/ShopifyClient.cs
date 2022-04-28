@@ -77,7 +77,10 @@ namespace Infrastructure.APIClients
 
             var json = await response.Content.ReadAsStringAsync();
 
-            var entity = JsonSerializer.Deserialize<TResponseEntity>(json);
+            var entity = JsonSerializer.Deserialize<TResponseEntity>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            });
 
             return entity;
         }
