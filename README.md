@@ -1,3 +1,2 @@
 # SquareSpace -> Shopify
-An integration application to web scrap SquareSpace web pages.
-Then create Shopify product resources from the content. 
+An integration application to web scrap SquareSpace web pages, then create Shopify product resources from the content. 
